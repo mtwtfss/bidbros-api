@@ -1,0 +1,19 @@
+# Sequel Database Configuration
+
+connection: &connection
+  host: localhost
+  adapter: postgres
+  encoding: unicode
+  username: mtwtfss
+
+development:
+  <<: *connection
+  database: sinatra_template_dev
+
+test:
+  <<: *connection
+  database: sinatra_template_test
+
+production:
+  <<: *connection
+  database: sinatra_template
