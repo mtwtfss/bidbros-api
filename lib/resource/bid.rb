@@ -37,8 +37,8 @@ module Resource
     end
 
     def create
-      bid = ::Bid.new
-      if set_attrs(bid, options)
+      bid = ::Bid.new(options.merge(accepted: 0))
+      if bid.save
         { status: 201, data: bid.values }
       else
         { status: 422, errors: bid.errors.full_messages }

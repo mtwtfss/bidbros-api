@@ -29,8 +29,8 @@ module Resource
     end
 
     def create
-      listing = ::Listing.new
-      if set_attrs(listing, options)
+      listing = ::Listing.new(options)
+      if listing.save
         { status: 201, data: listing.values }
       else
         { status: 422, errors: listing.errors.full_messages }
