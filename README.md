@@ -45,3 +45,4 @@ This is the API service for Bid Bros
 ## Running the console
 
 1. `bundle exec rake console`
+
