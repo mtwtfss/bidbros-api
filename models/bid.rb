@@ -8,7 +8,7 @@ class Bid < Sequel::Model
 
   def validate
     super
-    validates_presence %i(listing_id accepted agent_id close_price duration commision)
+    validates_presence %i(listing_id accepted agent_id close_price duration commission)
     validates_unique(:listing_id) { |bids| bids.where(accepted: 1) }
   end
 end

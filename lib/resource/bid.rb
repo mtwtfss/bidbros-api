@@ -22,6 +22,7 @@ module Resource
 
     def bid_set
       ::Bid
+        .select_all(:bids)
         .join(::Listing, id: :listing_id)
         .join(::Seller, id: :seller_id)
         .where('listings.seller_id = ?', options[:seller_id])
