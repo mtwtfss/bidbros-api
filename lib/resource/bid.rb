@@ -30,6 +30,7 @@ module Resource
 
     def format(bids)
       bids.map do |bid|
+        bid[:agent] = Agent.new(id: bid.agent_id).render
         bid[:created_at] = bid[:created_at].to_i
         bid[:updated_at] = bid[:updated_at].to_i
         bid.to_hash

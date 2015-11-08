@@ -8,12 +8,7 @@ module Resource
 
     def render
       agent = ::Agent[options[:id]]
-      if agent
-        agent = agent.values
-        agent[:created_at] = agent[:created_at].to_i
-        agent[:updated_at] = agent[:updated_at].to_i
-        { status: 200, data: agent }
-      end
+      { status: 200, data: agent.values.merge(agent_data(agent)) } if agent
     end
 
     def render_set
@@ -55,6 +50,56 @@ module Resource
 
     def updatable_fields
       %w(:yelp_url)
+    end
+
+    def access_token
+      '07509b2d9cbbb03085b54a93a1afe935'
+    end
+
+    def agent_data(agent)
+      uri = URI("https://rets.io/api/v1/armls/agents/#{agent.agent_id}/listings?access_token=#{access_token}")
+      parsed_response = JSON.parse(Net::HTTP.get(uri))
+
+      durations = profit_ranges = []
+      listings = parsed_response["bundle"]["listings"]
+
+      listings.to_a.each do |listing|
+        durations.insert(listing['daysOnMarket'])
+        profit_range = listing['closePrice'] - listing['originalPrice'] rescue next
+        profit_ranges.insert(profit_range)
+      end
+
+      yelp_data = agent.yelp_url ? get_yelp_data(agent.yelp_url) : {}
+
+      {
+        name: parsed_response["bundle"]["fullName"],
+        phone: parsed_response["bundle"]["cellPhone"],
+        duration_min: durations.min,
+        duration_max: durations.max,
+        profit_range_min: profit_ranges.min,
+        profit_range_max: profit_ranges.max,
+        yelp_rating: yelp_data[:rating],
+        review_count: yelp_data[:review_count]
+      }
+    end
+
+    def yelp_creds
+      {
+        consumer_key: 'pxplEQIQRgOfyvvLHKNCJg',
+        consumer_secret: '8xyAPmm8_7k8_ngPmeRIaF4y95g',
+        token: 'cNfLdahb44BvCdFecO6sFvtAvAyjmtBh',
+        token_secret: 'ORGO4iabK_6M9PG_DEyrezWQli0'
+      }
+    end
+
+    def get_yelp_data(url)
+      client = Yelp::Client.new(yelp_creds)
+      response = client.business(url.split("/").last).business
+      return {} if response.nil?
+      {
+        rating: response.rating,
+        review_count: response.review_count
+      }
     end
   end
 end

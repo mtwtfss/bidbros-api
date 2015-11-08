@@ -6,6 +6,7 @@ gem 'sinatra-sequel'
 gem 'rack-cors'
 gem 'warden'
 gem 'rake'
+gem 'yelp'
 gem 'pg'
 
 group :development, :test do
