@@ -7,6 +7,11 @@ not_found do
   '404'
 end
 
+post '/agent_login' do
+  agent = Agent.first(agent_id: params[:agent_id])
+  agent.nil? ? not_found : Resource::Agent.new(id: agent.id).render
+end
+
 get '/agents' do
   Resource::Agent.new(params).render_set
 end
@@ -51,6 +56,11 @@ end
 
 post '/listing' do
   Resource::Listing.new(params).create
+end
+
+post '/seller_login' do
+  seller = Seller.first(email: params[:email])
+  seller.nil? ? not_found : Resource::Seller.new(id: seller.id).render
 end
 
 get '/seller/:id' do
