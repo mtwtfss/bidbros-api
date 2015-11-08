@@ -1,8 +1,8 @@
-# Sinatra Template
+# Bid Bros
 
 ## About
 
-This is a template for Sinatra applications.
+This is the API service for Bid Bros
 
 ## Setup
 
@@ -12,8 +12,8 @@ This is a template for Sinatra applications.
 1. Install RVM
     + `\curl -sSL https://get.rvm.io | bash -s stable --ruby=2.2.2`
     + `rvm use 2.2.2 --default`
-    + `rvm gemset create sinatra-template`
-    + `rvm use 2.2.2@sinatra-template --default`
+    + `rvm gemset create bidbros`
+    + `rvm use 2.2.2@bidbros --default`
 
 1.  Install Postgres
     + `brew install postgresql`
