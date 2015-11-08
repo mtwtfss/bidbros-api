@@ -49,7 +49,7 @@ module Resource
     end
 
     def updatable_fields
-      %w(:yelp_url)
+      %w(yelp_url)
     end
 
     def access_token
@@ -60,13 +60,13 @@ module Resource
       uri = URI("https://rets.io/api/v1/armls/agents/#{agent.agent_id}/listings?access_token=#{access_token}")
       parsed_response = JSON.parse(Net::HTTP.get(uri))
 
-      durations = profit_ranges = []
+      durations = []
+      profit_ranges = []
       listings = parsed_response["bundle"]["listings"]
 
       listings.to_a.each do |listing|
-        durations.insert(listing['daysOnMarket'])
-        profit_range = listing['closePrice'] - listing['originalPrice'] rescue next
-        profit_ranges.insert(profit_range)
+        durations << listing['daysOnMarket']
+        profit_ranges << listing['closePrice'].to_i - listing['originalPrice'].to_i
       end
 
       yelp_data = agent.yelp_url ? get_yelp_data(agent.yelp_url) : {}

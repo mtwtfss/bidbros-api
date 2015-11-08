@@ -36,12 +36,5 @@ module Resource
         { status: 422, errors: listing.errors.full_messages }
       end
     end
-
-    def set_attrs(listing, attrs)
-      attrs.each do |k, v|
-        listing[k] = v if updatable_fields.include? k.to_s
-      end
-      listing.save
-    end
   end
 end

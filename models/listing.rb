@@ -4,6 +4,7 @@ class Listing < Sequel::Model
   self.raise_on_save_failure = false
 
   many_to_one :seller
+  one_to_many :bids
 
   def validate
     super

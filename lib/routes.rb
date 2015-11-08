@@ -38,7 +38,6 @@ get '/bid/:id' do
 end
 
 put '/bid/:id' do
-  auth_check(params[:id].to_i)
   Resource::Bid.new(params).update
 end
 

@@ -21,16 +21,16 @@ module Resource
     end
 
     def bid_set
+      listings = ::Seller[options[:seller_id]].listings
+      listings.delete_if { |listing| listing.bids.select { |bid| bid.accepted == 1 }.any? }
       ::Bid
-        .select_all(:bids)
-        .join(::Listing, id: :listing_id)
-        .join(::Seller, id: :seller_id)
-        .where('listings.seller_id = ?', options[:seller_id])
+        .where(accepted: 0)
+        .where(listing_id: listings.map(&:id).uniq)
     end
 
     def format(bids)
       bids.map do |bid|
-        bid[:agent] = Agent.new(id: bid.agent_id).render
+        bid[:agent] = Agent.new(id: bid.agent_id).render[:data]
         bid[:created_at] = bid[:created_at].to_i
         bid[:updated_at] = bid[:updated_at].to_i
         bid.to_hash
@@ -48,14 +48,14 @@ module Resource
 
     def update
       bid = ::Bid[options[:id]]
-      if bid.user_id == options[:user_id].to_i
-        if set_attrs(bid, options)
-          { status: 200, data: bid.values }
-        else
-          { status: 422, errors: bid.errors.full_messages }
-        end
+      if options[:accepted].to_i == 1
+        ::Bid.where(listing_id: bid.listing_id).update(accepted: -1)
+      end
+      bid.accepted = options[:accepted].to_i unless options[:accepted].nil?
+      if bid.save
+        { status: 200, data: bid.values }
       else
-        throw 403
+        { status: 422, errors: bid.errors.full_messages }
       end
     end
 
@@ -67,7 +67,7 @@ module Resource
     end
 
     def updatable_fields
-      %w(:accepted)
+      %w(accepted)
     end
   end
 end
