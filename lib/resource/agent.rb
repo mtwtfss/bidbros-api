@@ -29,8 +29,8 @@ module Resource
     end
 
     def create
-      agent = ::Agent.new
-      if set_attrs(agent, options)
+      agent = ::Agent.new(options)
+      if agent.save
         { status: 201, data: agent.values }
       else
         { status: 422, errors: agent.errors.full_messages }
@@ -38,23 +38,19 @@ module Resource
     end
 
     def update
-      bid = ::Bid[options[:id]]
-      if bid.user_id == options[:user_id].to_i
-        if set_attrs(bid, options)
-          { status: 200, data: bid.values }
-        else
-          { status: 422, errors: bid.errors.full_messages }
-        end
+      agent = ::Agent[options[:id]]
+      if set_attrs(agent, options)
+        { status: 200, data: agent.values }
       else
-        throw 403
+        { status: 422, errors: agent.errors.full_messages }
       end
     end
 
-    def set_attrs(bid, attrs)
+    def set_attrs(agent, attrs)
       attrs.each do |k, v|
-        bid[k] = v if updatable_fields.include? k.to_s
+        agent[k] = v if updatable_fields.include? k.to_s
       end
-      bid.save
+      agent.save
     end
 
     def updatable_fields
