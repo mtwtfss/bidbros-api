@@ -7,56 +7,56 @@ not_found do
   '404'
 end
 
-post '/login' do
-  warden.authenticate! if current_user.nil?
-  Resource::User.new(id: current_user.id).render
+get '/agents' do
+  Resource::Agent.new(params).render_set
 end
 
-get '/logout' do
-  warden.logout
+get '/agent/:id' do
+  Resource::Agent.new(params).render || not_found
 end
 
-get '/users' do
-  Resource::User.new(params).render_set
-end
-
-get '/user' do
-  halt 401 if current_user.nil?
-  Resource::User.new(id: current_user.id).render
-end
-
-get '/user/:id' do
-  Resource::User.new(params).render || not_found
-end
-
-put '/user/:id' do
+put '/agent/:id' do
   auth_check(params[:id].to_i)
-  Resource::User.new(params).update
+  Resource::Agent.new(params).update
 end
 
-post '/user' do
-  Resource::User.new(params).create
+post '/agent' do
+  Resource::Agent.new(params).create
 end
 
-get '/posts' do
-  Resource::Post.new(params).render_set
+get '/bids' do
+  Resource::Bid.new(params).render_set
 end
 
-get '/post/:id' do
-  Resource::Post.new(params).render || not_found
+get '/bid/:id' do
+  Resource::Bid.new(params).render || not_found
 end
 
-put '/post/:id' do
-  auth_check
-  Resource::Post.new(params).update
+put '/bid/:id' do
+  auth_check(params[:id].to_i)
+  Resource::Bid.new(params).update
 end
 
-post '/post' do
-  auth_check
-  Resource::Post.new(params).create
+post '/bid' do
+  Resource::Bid.new(params).create
 end
 
-delete '/post/:id' do
-  auth_check
-  Resource::Post.new(params).delete
+get '/listings' do
+  Resource::Listing.new(params).render_set
+end
+
+get '/listing/:id' do
+  Resource::Listing.new(params).render || not_found
+end
+
+post '/listing' do
+  Resource::Listing.new(params).create
+end
+
+get '/seller/:id' do
+  Resource::Seller.new(params).render || not_found
+end
+
+post '/seller' do
+  Resource::Seller.new(params).create
 end

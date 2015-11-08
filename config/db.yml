@@ -8,12 +8,12 @@ connection: &connection
 
 development:
   <<: *connection
-  database: sinatra_template_dev
+  database: bidbros_dev
 
 test:
   <<: *connection
-  database: sinatra_template_test
+  database: bidbros_test
 
 production:
   <<: *connection
-  database: sinatra_template
+  database: bidbros
